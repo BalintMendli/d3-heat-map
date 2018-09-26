@@ -14,9 +14,24 @@ document.addEventListener('DOMContentLoaded', () => {
       .domain([2.8, 3.9, 5, 6.1, 7.2, 8.3, 9.4, 10.6, 11.7, 12.8].reverse())
       .range(d3.schemeRdYlBu[11]);
 
-    const w = 900;
+    const w = 1600;
     const h = 600;
     const padding = 40;
+
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
 
     d3.select('#container')
       .append('h1')
@@ -38,10 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
       .data(data.monthlyVariance)
       .enter()
       .append('rect')
-      .attr('x', d => (d.year - 1753) * 3)
+      .attr('x', d => (d.year - 1753) * 5)
       .attr('y', d => d.month * 40)
-      .attr('width', 3)
+      .attr('width', 5)
       .attr('height', 40)
-      .style('fill', d => colorScale2(d.variance + 8.66));
+      .style('fill', d => colorScale2(d.variance + 8.66))
+      .append('title')
+      .text(
+        d =>
+          `${d.year} - ${monthNames[d.month - 1]}\n${(
+            d.variance + 8.66
+          ).toFixed(1)}°C\n${d.variance.toFixed(1)}°C`
+      );
   });
 });
