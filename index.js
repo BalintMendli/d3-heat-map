@@ -97,5 +97,20 @@ document.addEventListener('DOMContentLoaded', () => {
       .selectAll('.tick text')
       .style('text-anchor', 'end')
       .attr('y', 17);
+
+    svg
+      .append('g')
+      .attr('class', 'legendLinear')
+      .attr('transform', `translate(${2 * padding},${h - padding})`)
+      .attr('font-size', '12px');
+
+    const legendLinear = d3
+      .legendColor()
+      .shapeWidth(30)
+      .cells([2.8, 3.9, 5, 6.1, 7.2, 8.3, 9.4, 10.6, 11.7, 12.8])
+      .orient('horizontal')
+      .scale(colorScale);
+
+    svg.select('.legendLinear').call(legendLinear);
   });
 });
