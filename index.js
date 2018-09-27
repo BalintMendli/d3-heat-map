@@ -17,11 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const xScale = d3
       .scaleLinear()
       .domain([yearMin, yearMax])
-      .range([padding, w - padding]);
+      .range([2 * padding, w - padding]);
 
     const yScale = d3
-      .scaleTime()
-      .domain([new Date(0, 0, 1), new Date(0, 11, 31)])
+      .scaleLinear()
+      .domain([0, 12])
       .range([padding, h - 2 * padding]);
 
     d3.select('#container')
@@ -38,19 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
       .append('svg')
       .attr('width', w)
       .attr('height', h);
-    console.log(
-      yScale(new Date(0, 1 - 1)),
-      yScale(new Date(0, 2 - 1)),
-      yScale(new Date(0, 3 - 1))
-    );
+
     svg
       .selectAll('rect')
       .data(data.monthlyVariance)
       .enter()
       .append('rect')
       .attr('x', d => xScale(d.year))
-      .attr('y', d => yScale(new Date(0, d.month - 1)))
-      .attr('width', (w - 2 * padding) / (yearMax - yearMin))
+      .attr('y', d => yScale(d.month - 1))
+      .attr('width', (w - 3 * padding) / (yearMax - yearMin))
       .attr('height', (h - 3 * padding) / 12)
       .style('fill', d => colorScale(d.variance + 8.66))
       .append('title')
@@ -70,15 +66,34 @@ document.addEventListener('DOMContentLoaded', () => {
       .append('g')
       .attr('transform', `translate(0, ${h - 2 * padding})`)
       .call(xAxis)
-      .attr('id', 'x-axis');
+      .attr('id', 'x-axis')
+      .append('text')
+      .text('Years')
+      .style('text-anchor', 'middle')
+      .attr('transform', `translate(${(w + padding) / 2},40)`)
+      .attr('fill', 'black')
+      .attr('font-size', '16px');
 
-    const yAxis = d3.axisLeft(yScale).tickFormat(d3.timeFormat('%B'));
+    const yAxis = d3
+      .axisLeft(yScale)
+      .tickValues([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+      .tickFormat(d => d3.timeFormat('%B')(new Date(0, d)));
 
-    svg
+    const yAxisGroup = svg
       .append('g')
-      .attr('transform', `translate(${padding},0)`)
+      .attr('transform', `translate(${2 * padding},0)`)
       .call(yAxis)
-      .attr('id', 'y-axis')
+      .attr('id', 'y-axis');
+
+    yAxisGroup
+      .append('text')
+      .text('Months')
+      .style('text-anchor', 'middle')
+      .attr('transform', `translate(-55,${(h - padding) / 2}) rotate(-90)`)
+      .attr('fill', 'black')
+      .attr('font-size', '16px');
+
+    yAxisGroup
       .selectAll('.tick text')
       .style('text-anchor', 'end')
       .attr('y', 17);
